@@ -69,6 +69,82 @@ char* dup_optarg_str() {
 }
 
 /**
+ * Print the contents of a file in reverse order to STDOUT
+ *
+ * \param path Path to the input file
+ * \param verbose If true, prints extra info
+ * \return EXIT_SUCCESS or EXIT_FAILURE
+ */
+int print_file_reverse(const char* path, bool verbose) {
+  int fd = open(path, O_RDONLY);
+  if (fd == -1) {
+    perror("open");
+    return EXIT_FAILURE;
+  }
+
+  struct stat st;
+  if (fstat(fd, &st) == -1) {
+    perror("fstat");
+    close(fd);
+    return EXIT_FAILURE;
+  }
+
+  off_t filesize = st.st_size;
+  if (filesize == 0) {
+    if (verbose) dprintf(STDOUT, "[INFO] File is empty.\n");
+    close(fd);
+    return EXIT_SUCCESS;
+  }
+
+  if (verbose) {
+    dprintf(STDOUT, "[INFO] Reading file '%s' (%ld bytes)\n",
+            path, (long)filesize);
+  }
+
+  size_t sz = (size_t)filesize;
+  char* buf = malloc(sz);
+  if (buf == NULL) {
+    perror("malloc");
+    close(fd);
+    return EXIT_FAILURE;
+  }
+
+  size_t total = 0;
+  while (total < sz) {
+    ssize_t rr = read(fd, buf + total, sz - total);
+    if (rr == -1) {
+      perror("read");
+      free(buf);
+      close(fd);
+      return EXIT_FAILURE;
+    }
+    if (rr == 0) break;
+    total += (size_t)rr;
+  }
+  close(fd);
+
+  for (size_t i = 0, j = total - 1; i < j; i++, j--) {
+    char tmp = buf[i];
+    buf[i] = buf[j];
+    buf[j] = tmp;
+  }
+
+  size_t wrote = 0;
+  while (wrote < total) {
+    ssize_t ww = write(STDOUT, buf + wrote, total - wrote);
+    if (ww == -1) {
+      perror("write");
+      free(buf);
+      return EXIT_FAILURE;
+    }
+    wrote += (size_t)ww;
+  }
+
+  free(buf);
+  return EXIT_SUCCESS;
+}
+
+/**
  * Binary options declaration
  * (must end with {0,0,0,0})
  *
@@ -87,7 +163,7 @@ static struct option binary_opts[] = {
  *
  * \see man 3 getopt_long or getopt
  */
-const char* binary_optstr = "hvi:o:";
+const char* binary_optstr = "hvi:";
 
 /**
  * Binary main loop
@@ -138,14 +214,14 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  // Printing params
-  dprintf(1, "** PARAMS **\n%-8s: %s\n%-8s: %s\n%-8s: %d\n",
-          "input", bin_input_param,
-          "verbose", is_verbose_mode);
+  if (is_verbose_mode) {
+    dprintf(STDOUT, "** PARAMS **\n%-8s: %s\n%-8s: %s\n",
+            "input", bin_input_param,
+            "verbose", is_verbose_mode ? "true" : "false");
+  }
 
-  // Reverse file content
+  int return_code = print_file_reverse(bin_input_param, is_verbose_mode);
 
-  // Freeing allocated memory
   free_if_needed(bin_input_param);
-  return EXIT_SUCCESS;
+  return return_code;
 }
