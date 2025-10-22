@@ -64,6 +64,6 @@ run: $(BIN_DIR)/$(EXEC)
 
 .PHONY: lint
 lint:
-	clang-format --Werror --dry-run ${SRC} ${INC}
+	clang-format --Werror ${SRC} ${INC}
 
 .PHONY: doc coverage
