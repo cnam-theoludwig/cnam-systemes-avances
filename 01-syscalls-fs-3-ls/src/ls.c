@@ -150,17 +150,17 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  if (is_verbose_mode) {
-    dprintf(STDOUT, "** PARAMS **\n%-8s: %s\n%-8s: %s\n%-8s: %s\n",
-            "input", bin_input_param,
-            "output", bin_output_param,
-            "verbose", is_verbose_mode ? "true" : "false");
-  }
+  // Printing params
+  dprintf(1, "** PARAMS **\n%-8s: %s\n%-8s: %s\n%-8s: %d\n",
+          "input", bin_input_param,
+          "output", bin_output_param,
+          "verbose", is_verbose_mode);
 
   int file1 = open(bin_input_param, O_RDONLY);
   int file2 = open(bin_output_param, O_WRONLY);
 
   if (file1 == -1 || file2 == -1) {
+    dprintf(STDERR, "Error: could not open the files.\n");
     perror("Error (open)");
     free_if_needed(bin_input_param);
     free_if_needed(bin_output_param);

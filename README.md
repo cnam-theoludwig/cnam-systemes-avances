@@ -4,7 +4,9 @@
 
 Code réalisé dans le cadre de la formation [Ingénieur en Informatique et Systèmes d'Information (SI), CNAM](https://www.itii-alsace.fr/formations/informatique-et-systemes-dinformation-le-cnam/), pour le module Systèmes Avancés.
 
-[TP N°1.1 : Appels système & fichiers : Copie de fichier](./01-syscalls-fs-1-copy)
+- [TP N°1.1 : Appels système & fichiers : Copie de fichiers](./01-syscalls-fs-1-copy)
+- [TP N°1.2 : Appels système & fichiers : Print « reverse »](./01-syscalls-fs-2-reverse)
+- [TP N°1.3 : Appels système & fichiers : ls « like »](./01-syscalls-fs-3-ls)
 
 ### Membres du groupe
 
@@ -27,8 +29,8 @@ Code réalisé dans le cadre de la formation [Ingénieur en Informatique et Syst
 # Cloner le dépôt
 git clone git@github.com:cnam-theoludwig/cnam-systemes-avances.git
 
-# Se déplacer dans le répertoire du TP (e.g. 01-syscalls_fs)
-cd cnam-systemes-avances/01-syscalls_fs
+# Se déplacer dans le répertoire du TP (e.g. 01-syscalls-fs-1-copy)
+cd cnam-systemes-avances/01-syscalls-fs-1-copy
 
 # Compiler et exécuter le programme
 make run

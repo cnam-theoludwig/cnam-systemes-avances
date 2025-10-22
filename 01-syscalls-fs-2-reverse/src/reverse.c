@@ -14,11 +14,10 @@
 #define MAX_PATH_LENGTH 4096
 #define BUFFER_SIZE 4096
 
-#define USAGE_SYNTAX "[OPTIONS] -i INPUT -o OUTPUT"
+#define USAGE_SYNTAX "[OPTIONS] -i INPUT"
 #define USAGE_PARAMS \
   "OPTIONS:\n\
   -i, --input  INPUT_FILE  : input file\n\
-  -o, --output OUTPUT_FILE : output file\n\
 ***\n\
   -v, --verbose : enable *verbose* mode\n\
   -h, --help    : display this help\n\
@@ -80,7 +79,6 @@ static struct option binary_opts[] = {
     {"help", no_argument, 0, 'h'},
     {"verbose", no_argument, 0, 'v'},
     {"input", required_argument, 0, 'i'},
-    {"output", required_argument, 0, 'o'},
     {0, 0, 0, 0}};
 
 /**
@@ -103,7 +101,6 @@ int main(int argc, char** argv) {
    */
   bool is_verbose_mode = false;
   char* bin_input_param = NULL;
-  char* bin_output_param = NULL;
 
   // Parsing options
   int opt = -1;
@@ -117,12 +114,6 @@ int main(int argc, char** argv) {
           bin_input_param = dup_optarg_str();
         }
         break;
-      case 'o':
-        if (optarg) {
-          free_if_needed(bin_output_param);
-          bin_output_param = dup_optarg_str();
-        }
-        break;
       case 'v':
         is_verbose_mode = true;
         break;
@@ -130,8 +121,6 @@ int main(int argc, char** argv) {
         print_usage(argv[0]);
 
         free_if_needed(bin_input_param);
-        free_if_needed(bin_output_param);
-
         return EXIT_SUCCESS;
       default:
         break;
@@ -142,47 +131,21 @@ int main(int argc, char** argv) {
    * Checking binary requirements
    * (could defined in a separate function)
    */
-  if (bin_input_param == NULL || bin_output_param == NULL) {
+  if (bin_input_param == NULL) {
     dprintf(STDERR, "Bad usage! See HELP [--help|-h]\n");
 
     free_if_needed(bin_input_param);
-    free_if_needed(bin_output_param);
     return EXIT_FAILURE;
   }
 
-  if (is_verbose_mode) {
-    dprintf(STDOUT, "** PARAMS **\n%-8s: %s\n%-8s: %s\n%-8s: %s\n",
-            "input", bin_input_param,
-            "output", bin_output_param,
-            "verbose", is_verbose_mode ? "true" : "false");
-  }
+  // Printing params
+  dprintf(1, "** PARAMS **\n%-8s: %s\n%-8s: %s\n%-8s: %d\n",
+          "input", bin_input_param,
+          "verbose", is_verbose_mode);
 
-  int file1 = open(bin_input_param, O_RDONLY);
-  int file2 = open(bin_output_param, O_WRONLY);
+  // Reverse file content
 
-  if (file1 == -1 || file2 == -1) {
-    perror("Error (open)");
-    free_if_needed(bin_input_param);
-    free_if_needed(bin_output_param);
-    return EXIT_FAILURE;
-  }
-
-  size_t bytes_read = 0;
-  size_t bytes_write = 0;
-  char buffer[BUFFER_SIZE];
-
-  while ((bytes_read = read(file1, buffer, BUFFER_SIZE)) > 0) {
-    bytes_write = write(file2, &buffer, bytes_read);
-    if (bytes_write != bytes_read) {
-      break;
-    }
-  }
-
-  close(file1);
-  close(file2);
-
+  // Freeing allocated memory
   free_if_needed(bin_input_param);
-  free_if_needed(bin_output_param);
-
   return EXIT_SUCCESS;
 }

@@ -20,7 +20,8 @@ jobs:
 
     strategy:
       matrix:
-        task: [01-syscalls-fs-1-copy]
+        task:
+          [01-syscalls-fs-1-copy, 01-syscalls-fs-2-reverse, 01-syscalls-fs-3-ls]
 
     steps:
       - uses: "actions/checkout@v5.0.0"
