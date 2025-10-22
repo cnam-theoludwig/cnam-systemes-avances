@@ -8,3 +8,4 @@ dependencies
 gcov
 html
 latex
+*.txt

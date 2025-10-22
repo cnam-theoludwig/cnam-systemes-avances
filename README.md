@@ -8,8 +8,8 @@ Code réalisé dans le cadre de la formation [Ingénieur en Informatique et Syst
 
 ### Membres du groupe
 
+- [Djelal BOUDJI](https://github.com/djelalb)
 - [Théo LUDWIG](https://gitlab.com/theoludwig)
-- TBD
 
 ## Prérequis
 
@@ -34,5 +34,5 @@ cd cnam-systemes-avances/01-syscalls_fs
 make run
 
 # Afficher l'aide du programme
-make run -- --help
+make run ARGS="--help"
 ```
