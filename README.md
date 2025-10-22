@@ -22,6 +22,7 @@ Code réalisé dans le cadre de la formation [Ingénieur en Informatique et Syst
 - [GNU gcov](https://gcc.gnu.org/onlinedocs/gcc/Gcov.html)
 - [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html)
 - [Doxygen](https://www.doxygen.nl/)
+- [LCOV Code Coverage](https://github.com/linux-test-project/lcov)
 
 ## Utilisation
 

@@ -9,3 +9,5 @@ gcov
 html
 latex
 *.txt
+output
+template
