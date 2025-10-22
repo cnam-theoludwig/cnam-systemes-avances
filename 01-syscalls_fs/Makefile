@@ -26,11 +26,14 @@ all: $(SRC) $(EXEC)
 %.o:%.c
 	$(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
 
-$(EXEC): $(OBJ)
+$(EXEC): $(OBJ) | bin
 	$(CC) -o $(BIN_DIR)/$@ -Wall $(LDFLAGS) $(OBJ)
 
 $(GEXEC):
 	$(CC) $(GCOVFLAGS) -o $(GCOV_DIR)/$@ -Wall $(LDFLAGS) $(SRC)
+
+bin:
+	mkdir --parents $(BIN_DIR)
 
 doc:
 	doxygen $(DOC_DIR)/doxygen.conf
