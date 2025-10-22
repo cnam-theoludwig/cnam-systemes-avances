@@ -9,22 +9,22 @@ int main() {
 
   pid = fork();
   if (pid < 0) {
-    perror("Fork failed");
+    perror("Error fork()");
     exit(EXIT_FAILURE);
   } else if (pid == 0) {
-    fprintf(stdout, "Child process : my PID is (PID: %d), Parent PID is : %d\n", getpid(), getppid());
+    printf("Child process: my PID is (PID: %d), Parent PID is : %d\n", getpid(), getppid());
     int exit_code = getpid() % 10;
-    fprintf(stdout, "Child process : Exiting with code %d\n", exit_code);
+    printf("Child process: Exiting with code %d\n", exit_code);
     exit(exit_code);
   } else {
-    fprintf(stdout, "Parent process (PID: %d), created Child PID: %d\n", getpid(), pid);
+    printf("Parent process (PID: %d), created Child PID: %d\n", getpid(), pid);
     wait(&status);
 
     if (WIFEXITED(status)) {
       int exit_status = WEXITSTATUS(status);
-      fprintf(stdout, "Parent process (PID: %d), Child PID: %d exited with status: %d\n", getpid(), pid, exit_status);
+      printf("Parent process (PID: %d), Child PID: %d exited with status: %d\n", getpid(), pid, exit_status);
     } else {
-      fprintf(stdout, "Child process did not terminate normally.\n");
+      printf("Child process did not terminate normally.\n");
     }
   }
 
