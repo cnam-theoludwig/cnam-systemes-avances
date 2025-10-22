@@ -18,7 +18,7 @@ $ ls /root/my_folder
 File1 - rwxrwxrw- root : root - 4096 - 010916 @ 16h24
 File2 - rwxrwx--- root : root - 0785 - 020916 @ 10h22
 Myfil3 - rwx------ toto : users - 4096 - 010916 @ 16h24
-[…]
+[...]
 ```
 
 ## Utilisation
