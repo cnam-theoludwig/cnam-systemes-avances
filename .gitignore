@@ -1,0 +1,10 @@
+build
+bin
+.vscode
+*.out
+*.o
+*.a
+dependencies
+gcov
+html
+latex
