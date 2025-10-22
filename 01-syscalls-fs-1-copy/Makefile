@@ -1,7 +1,9 @@
+CC_SANITIZER_FLAGS=-fsanitize=address -fsanitize=undefined
+# CC_SANITIZER_FLAGS =
+
 CC=gcc
-CFLAGS=-Wall -c
-# CFLAGS=-Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -std=c17 -pedantic -pedantic-errors -O3 -c
-LDFLAGS=-I ./include/
+CFLAGS=-Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -O3 -c
+LDFLAGS=${CC_SANITIZER_FLAGS} -I ./include/
 
 SRC_DIR=./src
 INC_DIR=./include
@@ -15,7 +17,7 @@ LCOV_REPORT=report.info
 
 SRC=$(wildcard $(SRC_DIR)/*.c)
 OBJ=$(SRC:.c=.o)
-EXEC=skeleton
+EXEC=copy
 
 GEXEC=$(EXEC).cov
 

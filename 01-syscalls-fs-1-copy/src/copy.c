@@ -1,22 +1,18 @@
-/**
- * \file skeleton.c
- * \brief Basic parsing options skeleton.
- * \author Pierre L. <pierre1.leroy@orange.com>
- * \version 0.1
- * \date 10 septembre 2016
- *
- * Basic parsing options skeleton exemple c file.
- */
 #include <errno.h>
+#include <fcntl.h>
 #include <getopt.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #define STDOUT 1
 #define STDERR 2
 
 #define MAX_PATH_LENGTH 4096
+#define BUFFER_SIZE 4096
 
 #define USAGE_SYNTAX "[OPTIONS] -i INPUT -o OUTPUT"
 #define USAGE_PARAMS \
@@ -35,7 +31,7 @@
  * \return void
  */
 void print_usage(char* bin_name) {
-  dprintf(1, "USAGE: %s %s\n\n%s\n", bin_name, USAGE_SYNTAX, USAGE_PARAMS);
+  dprintf(STDOUT, "USAGE: %s %s\n\n%s\n", bin_name, USAGE_SYNTAX, USAGE_PARAMS);
 }
 
 /**
@@ -80,13 +76,12 @@ char* dup_optarg_str() {
  * \see man 3 getopt_long or getopt
  * \see struct option definition
  */
-static struct option binary_opts[] =
-    {
-        {"help", no_argument, 0, 'h'},
-        {"verbose", no_argument, 0, 'v'},
-        {"input", required_argument, 0, 'i'},
-        {"output", required_argument, 0, 'o'},
-        {0, 0, 0, 0}};
+static struct option binary_opts[] = {
+    {"help", no_argument, 0, 'h'},
+    {"verbose", no_argument, 0, 'v'},
+    {"input", required_argument, 0, 'i'},
+    {"output", required_argument, 0, 'o'},
+    {0, 0, 0, 0}};
 
 /**
  * Binary options string
@@ -106,7 +101,7 @@ int main(int argc, char** argv) {
    * Binary variables
    * (could be defined in a structure)
    */
-  short int is_verbose_mode = 0;
+  bool is_verbose_mode = false;
   char* bin_input_param = NULL;
   char* bin_output_param = NULL;
 
@@ -117,20 +112,19 @@ int main(int argc, char** argv) {
   while ((opt = getopt_long(argc, argv, binary_optstr, binary_opts, &opt_idx)) != -1) {
     switch (opt) {
       case 'i':
-        // input param
         if (optarg) {
+          free_if_needed(bin_input_param);
           bin_input_param = dup_optarg_str();
         }
         break;
       case 'o':
-        // output param
         if (optarg) {
+          free_if_needed(bin_output_param);
           bin_output_param = dup_optarg_str();
         }
         break;
       case 'v':
-        // verbose mode
-        is_verbose_mode = 1;
+        is_verbose_mode = true;
         break;
       case 'h':
         print_usage(argv[0]);
@@ -138,7 +132,7 @@ int main(int argc, char** argv) {
         free_if_needed(bin_input_param);
         free_if_needed(bin_output_param);
 
-        exit(EXIT_SUCCESS);
+        return EXIT_SUCCESS;
       default:
         break;
     }
@@ -151,11 +145,9 @@ int main(int argc, char** argv) {
   if (bin_input_param == NULL || bin_output_param == NULL) {
     dprintf(STDERR, "Bad usage! See HELP [--help|-h]\n");
 
-    // Freeing allocated data
     free_if_needed(bin_input_param);
     free_if_needed(bin_output_param);
-    // Exiting with a failure ERROR CODE (== 1)
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   // Printing params
@@ -164,11 +156,31 @@ int main(int argc, char** argv) {
           "output", bin_output_param,
           "verbose", is_verbose_mode);
 
-  // Business logic must be implemented at this point
+  int file1 = open(bin_input_param, O_RDONLY);
+  int file2 = open(bin_output_param, O_WRONLY);
 
-  /* LOREM IPSUM DOT SIR AMET */
+  if (file1 == -1 || file2 == -1) {
+    dprintf(STDERR, "Error: could not open the files.\n");
+    perror("Error (open)");
+    free_if_needed(bin_input_param);
+    free_if_needed(bin_output_param);
+    return EXIT_FAILURE;
+  }
 
-  // Freeing allocated data
+  size_t bytes_read = 0;
+  size_t bytes_write = 0;
+  char buffer[BUFFER_SIZE];
+
+  while ((bytes_read = read(file1, buffer, BUFFER_SIZE)) > 0) {
+    bytes_write = write(file2, &buffer, bytes_read);
+    if (bytes_write != bytes_read) {
+      break;
+    }
+  }
+
+  close(file1);
+  close(file2);
+
   free_if_needed(bin_input_param);
   free_if_needed(bin_output_param);
 
