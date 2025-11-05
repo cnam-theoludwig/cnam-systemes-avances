@@ -1,69 +1,42 @@
-EXEC=redirect
-SRC_DIR=src
-INC_DIR=include
-OBJ_DIR=build
-BIN_DIR=bin
-DOC_DIR=doc
-GCOV_DIR=gcov
+SRC_DIR := src
+INC_DIR := include
+OBJ_DIR := build
+BIN_DIR := bin
+GCOV_DIR := gcov
 
-CC_SANITIZER_FLAGS=-fsanitize=address -fsanitize=undefined
-# CC_SANITIZER_FLAGS =
+CC := gcc
+CC_SANITIZER_FLAGS := -fsanitize=address -fsanitize=undefined
+CFLAGS := -Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -O3 -c
+LDFLAGS := ${CC_SANITIZER_FLAGS} -I ./${INC_DIR}/
 
-CC=gcc
-# CFLAGS=-Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -std=c17 -pedantic -pedantic-errors -O3 -c
-CFLAGS=-Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -O3 -c
-LDFLAGS=${CC_SANITIZER_FLAGS} -I ./${INC_DIR}/
-GCOVFLAGS=-O0 --coverage -Wall -g -I ./${INC_DIR}/
-LCOV_REPORT=report.info
+REDIRECT_SRC := $(SRC_DIR)/main.c
+PRINT_SRC := $(SRC_DIR)/print.c
 
-SRC=$(wildcard $(SRC_DIR)/*.c)
-INC=$(wildcard $(INC_DIR)/*.h)
-OBJ=$(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC))
-GOBJ=$(patsubst $(SRC_DIR)/%.c, $(GCOV_DIR)/%.o, $(SRC))
+REDIRECT_OBJ := $(OBJ_DIR)/main.o
+PRINT_OBJ := $(OBJ_DIR)/print.o
 
-GEXEC=$(EXEC).cov
-AR_NAME=archive_$(EXEC).tar.gz
+.PHONY: all clean run run-redirect run-print
 
-all: $(BIN_DIR)/$(EXEC)
+all: $(BIN_DIR)/redirect $(BIN_DIR)/print
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
+	$(CC) $(CFLAGS) $< -I ./${INC_DIR}/ -o $@
 
-$(BIN_DIR)/$(EXEC): $(OBJ) | $(BIN_DIR)
-	$(CC) $(LDFLAGS) -o $@ $(OBJ)
+$(BIN_DIR)/redirect: $(REDIRECT_OBJ) | $(BIN_DIR)
+	$(CC) $(LDFLAGS) -o $@ $^
 
-$(GCOV_DIR)/%.o: $(SRC_DIR)/%.c | $(GCOV_DIR)
-	$(CC) $(GCOVFLAGS) -c $< -o $@
-
-$(GCOV_DIR)/$(GEXEC): $(GOBJ)
-	$(CC) $(GCOVFLAGS) -o $@ $^
+$(BIN_DIR)/print: $(PRINT_OBJ) | $(BIN_DIR)
+	$(CC) $(LDFLAGS) -o $@ $^
 
 $(BIN_DIR) $(OBJ_DIR) $(GCOV_DIR):
-	mkdir --parents $@
-
-doc:
-	doxygen $(DOC_DIR)/doxygen.conf
-
-coverage: $(GCOV_DIR)/$(GEXEC)
-	./$(GCOV_DIR)/$(GEXEC) -h
-	./$(GCOV_DIR)/$(GEXEC) ${ARGS}
-	lcov -o $(GCOV_DIR)/$(LCOV_REPORT) -c -f -d $(GCOV_DIR)
-	genhtml -o $(GCOV_DIR)/report $(GCOV_DIR)/$(LCOV_REPORT)
-
-package: coverage doc all
-	rm -rf $(AR_NAME)
-	tar cvfz $(AR_NAME) ./*
+	mkdir -p $@
 
 clean:
-	rm --recursive --force $(OBJ_DIR) $(BIN_DIR) $(DOC_DIR)/latex/ \
-	$(DOC_DIR)/html/ $(GCOV_DIR)
+	rm -rf $(OBJ_DIR) $(BIN_DIR) $(GCOV_DIR)
 
-.PHONY: run
-run: $(BIN_DIR)/$(EXEC)
-	./bin/$(EXEC) ${ARGS}
+# run helpers
+run-redirect: $(BIN_DIR)/redirect
+	./$(BIN_DIR)/redirect $(ARGS)
 
-.PHONY: lint
-lint:
-	clang-format --Werror ${SRC} ${INC}
-
-.PHONY: doc coverage
+run-print: $(BIN_DIR)/print
+	./$(BIN_DIR)/print $(ARGS)

@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 200809L
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -6,8 +7,12 @@
 #include <errno.h>
 
 int main(int argc, char *argv[]) {
-    pid_t pid = fork();
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <programme_a_exec> [args...]\n", argv[0]);
+        return EXIT_FAILURE;
+    }
 
+    pid_t pid = fork();
     if (pid < 0) {
       perror("fork");
       exit(EXIT_FAILURE);
@@ -16,6 +21,7 @@ int main(int argc, char *argv[]) {
     if (pid == 0) {
         /* CHILD */
         printf("Child: PID = %d (this goes to stdout before close)\n", getpid());
+        fflush(stdout);
 
         /* close stdout */
         if (close(1) < 0 && errno != EBADF) {
@@ -23,7 +29,7 @@ int main(int argc, char *argv[]) {
             _exit(EXIT_FAILURE);
         }
 
-        /*open a temporary file*/
+        /* open temporary file /tmp/proc-exerciseXXXXXX */
         char template[] = "/tmp/proc-exerciseXXXXXX";
         int fd = mkstemp(template);
         if (fd < 0) {
@@ -35,17 +41,15 @@ int main(int argc, char *argv[]) {
         /* redirect file to stdout */
         if (dup2(fd, 1) < 0) {
             perror("dup2");
+            close(fd);
             _exit(EXIT_FAILURE);
         }
-
-        if (fd != 1) {
-            close(fd);
-        }
+        if (fd != 1) close(fd);
 
         dprintf(2, "Child: stdout is now redirected to file '%s' (fd 1)\n", template);
-        execlp(argv[1], argv[1], (argc > 2) ? argv[2] : NULL, (char *)NULL);
 
-        perror("execlp");
+        execvp(argv[1], &argv[1]);
+        perror("execvp");
         _exit(EXIT_FAILURE);
     } else {
         /* FATHER */
