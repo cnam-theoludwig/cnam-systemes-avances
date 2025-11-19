@@ -1,4 +1,4 @@
-EXEC=ls
+EXEC=threaded_sort
 SRC_DIR=src
 INC_DIR=include
 OBJ_DIR=build

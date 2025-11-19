@@ -1,87 +1,49 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
-#include<pthread.h>
+/* single_thread.c */
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/time.h>
+#include <time.h>
+#include <limits.h>
 
-/**
- * L'objectif de ce code est de mettre en place un thread :
- * ===
- * - réalisant l'affichage de données issues d'une structure lambda.
- * ===
- * Schématiquement :
- * ===
- *       Père
- *         ^
- *         |  
- * Thread1 | 
- */
+#ifndef SIZE
+#define SIZE 10000000
+#endif
 
-/**
- * Structure lambda contenant des champs basiques.
- * (Ces champs n'ont aucun intérêt à par être utilisés pour l'exemple)
- * ===
- * codeA  : entier 
- * buffer : tableau de 10 caractères 
- */
-typedef struct my_pthread_data {
-  short int codeA;
-  char buffer[32];
-} pthread_data;
+int *tab;
 
-
-/**
- * Fonction exécutée par le thread
- */ 
-void * my_thread_code(void * arg) {
-  // Typage de la structure passée en paramètre
-  pthread_data * data = (pthread_data *) arg;
-
-  // Initialisation de la variable du code retour
-  int * return_code = malloc(sizeof(int));
-  if (return_code != NULL) {
-    *return_code = 1664;
-  }
-
-  // Le code métier consiste à afficher les informations de la structure.
-  printf("=~> Code executé par le thread\n"); 
-  printf("* data.codeA  : %d\n", data->codeA);
-  printf("* data.buffer : %s\n", data->buffer);
-  printf("=~> Terminaison du thread\n");
-
-  // Code retour du thread
-  pthread_exit((void*)return_code);  
+double elapsed(struct timeval a, struct timeval b) {
+    return (b.tv_sec - a.tv_sec) + (b.tv_usec - a.tv_usec) / 1e6;
 }
 
-
 int main(int argc, char** argv) {
-  // Variables
-  pthread_t thread_id; 
-  pthread_data my_data;
-  int * my_return_code;
-  // Initialisation de la structure de données avec des données lambda
-  my_data.codeA = 42;
-  
-  memset(my_data.buffer, '\0', sizeof(char)*32);
-  memcpy(my_data.buffer, "HELLO WORLD", sizeof(char)*11);
+    size_t i;
+    tab = malloc((size_t)SIZE * sizeof(int));
+    if (!tab) {
+        perror("malloc");
+        return EXIT_FAILURE;
+    }
 
-  // Initialisation du thread :
-  // Les options de création du thread sont celles par défaut d'ou l'utilisation du la valeur NULL.
-  // On positionne le pointeur sur fonction ou "callback" de la fonction my_thread_code.
-  // On position le pointeur de la structure que l'on a initialisé.
-  int ret =  pthread_create(&thread_id, NULL, &my_thread_code, &my_data);
- 
-  if (ret != 0) {
-    perror("Impossible de créer le thread");
-  }
-  else {
-    // Attente de terminaison du thread
-    pthread_join(thread_id, (void**)&my_return_code);
+    srand((unsigned)time(NULL));
+    for (i = 0; i < SIZE; ++i) {
+      tab[i] = rand();
+    }
 
-    // Affichage du code retour du thread
-    printf("Code retour du thread : %d\n", *my_return_code);
+    struct timeval t0, t1;
+    gettimeofday(&t0, NULL);
 
-    free(my_return_code);
-  }
+    int gmin = INT_MAX;
+    int gmax = INT_MIN;
+    for (i = 0; i < SIZE; ++i) {
+        if (tab[i] < gmin) gmin = tab[i];
+        if (tab[i] > gmax) gmax = tab[i];
+    }
 
-  return 0;
+    gettimeofday(&t1, NULL);
+
+    printf("Taille SIZE = %d\n", SIZE);
+    printf("min = %d, max = %d\n", gmin, gmax);
+    printf("Temps recherche (s) = %.6f\n", elapsed(t0, t1));
+
+    free(tab);
+    return EXIT_SUCCESS;
 }
