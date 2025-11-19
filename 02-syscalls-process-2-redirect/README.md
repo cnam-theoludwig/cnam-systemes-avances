@@ -1,4 +1,4 @@
-# 02-syscalls-fs-2-redirect
+# 02-syscalls-process-2-redirect
 
 ```sh
 make
