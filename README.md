@@ -9,6 +9,7 @@ Code réalisé dans le cadre de la formation [Ingénieur en Informatique et Syst
 - [TP N°1.3 : Appels système & fichiers : ls « like »](./01-syscalls-fs-3-ls)
 - [TP N°2.1 : Appels système & processus : « Fork yourself »](./02-syscalls-process-1-fork)
 - [TP N°2.2 : Appels système & processus : « Redirection de flux standard »](./02-syscalls-process-2-redirect)
+- [TP N°3.1 : Processus & threads : « Threaded sort »](./03-thread-1-sort)
 - [Projet `ctar`](./projet-ctar)
 
 ### Membres du groupe
