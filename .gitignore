@@ -11,3 +11,4 @@ latex
 *.txt
 output
 template
+jenkins.war
