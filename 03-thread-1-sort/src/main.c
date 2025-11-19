@@ -20,17 +20,21 @@ int gmin = INT_MAX;
 int gmax = INT_MIN;
 pthread_mutex_t gmutex = PTHREAD_MUTEX_INITIALIZER;
 
-double elapsed(struct timeval a, struct timeval b) {
-    return (b.tv_sec - a.tv_sec) + (b.tv_usec - a.tv_usec) / 1e6;
+double elapsed(struct timeval first, struct timeval second) {
+    return (second.tv_sec - first.tv_sec) + (second.tv_usec - first.tv_usec) / 1e6;
 }
 
 void *thread_func(void *arg) {
     thread_arg_t *t = (thread_arg_t*)arg;
     int lmin = INT_MAX, lmax = INT_MIN;
     for (size_t i = t->start; i < t->end; ++i) {
-        int v = tab[i];
-        if (v < lmin) lmin = v;
-        if (v > lmax) lmax = v;
+        int val = tab[i];
+        if (val < lmin) {
+          lmin = val;
+        }
+        if (val > lmax) {
+          lmax = val;
+        }
     }
 
     pthread_mutex_lock(&gmutex);
@@ -90,7 +94,6 @@ int main(int argc, char** argv) {
         offset += chunk;
     }
 
-    int gmin = INT_MAX, gmax = INT_MIN;
     for (int t = 0; t < nthreads; ++t) {
         pthread_join(threads[t], NULL);
     }
