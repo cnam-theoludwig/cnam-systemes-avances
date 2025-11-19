@@ -1,9 +1,9 @@
-/* single_thread.c */
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <time.h>
 #include <limits.h>
+#include <pthread.h>
 
 #ifndef SIZE
 #define SIZE 10000000
@@ -11,39 +11,90 @@
 
 int *tab;
 
+typedef struct {
+    int tid;
+    size_t start, end;
+    int local_min;
+    int local_max;
+} thread_arg_t;
+
 double elapsed(struct timeval a, struct timeval b) {
     return (b.tv_sec - a.tv_sec) + (b.tv_usec - a.tv_usec) / 1e6;
 }
 
+void *thread_func(void *arg) {
+    thread_arg_t *t = (thread_arg_t*)arg;
+    int lmin = INT_MAX;
+    int lmax = INT_MIN;
+    for (size_t i = t->start; i < t->end; ++i) {
+        int v = tab[i];
+        if (v < lmin) lmin = v;
+        if (v > lmax) lmax = v;
+    }
+    t->local_min = lmin;
+    t->local_max = lmax;
+    return NULL;
+}
+
 int main(int argc, char** argv) {
-    size_t i;
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <num_threads>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    int nthreads = atoi(argv[1]);
+    if (nthreads <= 0) nthreads = 1;
+
     tab = malloc((size_t)SIZE * sizeof(int));
     if (!tab) {
-        perror("malloc");
-        return EXIT_FAILURE;
+      perror("malloc");
+      return EXIT_FAILURE;
     }
 
     srand((unsigned)time(NULL));
-    for (i = 0; i < SIZE; ++i) {
+    for (size_t i = 0; i < SIZE; ++i) {
       tab[i] = rand();
     }
+
+    pthread_t *threads = malloc(nthreads * sizeof(pthread_t));
+    thread_arg_t *args = malloc(nthreads * sizeof(thread_arg_t));
+    if (!threads || !args) {
+      perror("alloc");
+      return EXIT_FAILURE;
+    }
+
+    size_t base = SIZE / nthreads;
+    size_t rem = SIZE % nthreads;
 
     struct timeval t0, t1;
     gettimeofday(&t0, NULL);
 
-    int gmin = INT_MAX;
-    int gmax = INT_MIN;
-    for (i = 0; i < SIZE; ++i) {
-        if (tab[i] < gmin) gmin = tab[i];
-        if (tab[i] > gmax) gmax = tab[i];
+    size_t offset = 0;
+    for (int t = 0; t < nthreads; ++t) {
+        size_t chunk = base + (t < (int)rem ? 1 : 0);
+        args[t].tid = t;
+        args[t].start = offset;
+        args[t].end = offset + chunk;
+        args[t].local_min = INT_MAX;
+        args[t].local_max = INT_MIN;
+        pthread_create(&threads[t], NULL, thread_func, &args[t]);
+        offset += chunk;
+    }
+
+    int gmin = INT_MAX, gmax = INT_MIN;
+    for (int t = 0; t < nthreads; ++t) {
+        pthread_join(threads[t], NULL);
+        if (args[t].local_min < gmin) gmin = args[t].local_min;
+        if (args[t].local_max > gmax) gmax = args[t].local_max;
     }
 
     gettimeofday(&t1, NULL);
 
-    printf("Taille SIZE = %d\n", SIZE);
-    printf("min = %d, max = %d\n", gmin, gmax);
+    printf("SIZE=%d, threads=%d\n", SIZE, nthreads);
+    printf("min=%d, max=%d\n", gmin, gmax);
     printf("Temps recherche (s) = %.6f\n", elapsed(t0, t1));
 
+    free(threads);
+    free(args);
     free(tab);
     return EXIT_SUCCESS;
 }

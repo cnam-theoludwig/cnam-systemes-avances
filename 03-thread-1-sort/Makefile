@@ -10,9 +10,10 @@ CC_SANITIZER_FLAGS=-fsanitize=address -fsanitize=undefined
 # CC_SANITIZER_FLAGS =
 
 CC=gcc
+PTHREAD_FLAGS = -pthread
 # CFLAGS=-Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -std=c17 -pedantic -pedantic-errors -O3 -c
-CFLAGS=-Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -O3 -c
-LDFLAGS=${CC_SANITIZER_FLAGS} -I ./${INC_DIR}/
+CFLAGS=-Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -O3 -c $(PTHREAD_FLAGS)
+LDFLAGS=${CC_SANITIZER_FLAGS} -I ./${INC_DIR}/ $(PTHREAD_FLAGS)
 GCOVFLAGS=-O0 --coverage -Wall -g -I ./${INC_DIR}/
 LCOV_REPORT=report.info
 
@@ -36,7 +37,7 @@ $(GCOV_DIR)/%.o: $(SRC_DIR)/%.c | $(GCOV_DIR)
 	$(CC) $(GCOVFLAGS) -c $< -o $@
 
 $(GCOV_DIR)/$(GEXEC): $(GOBJ)
-	$(CC) $(GCOVFLAGS) -o $@ $^
+	$(CC) $(GCOVFLAGS) -o $@ $^ $(PTHREAD_FLAGS)
 
 $(BIN_DIR) $(OBJ_DIR) $(GCOV_DIR):
 	mkdir --parents $@
