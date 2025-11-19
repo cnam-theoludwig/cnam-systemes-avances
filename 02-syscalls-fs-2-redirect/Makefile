@@ -34,6 +34,10 @@ $(BIN_DIR) $(OBJ_DIR) $(GCOV_DIR):
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR) $(GCOV_DIR)
 
+.PHONY: lint
+lint:
+	clang-format --Werror ${REDIRECT_SRC} ${PRINT_SRC}
+
 # run helpers
 run-redirect: $(BIN_DIR)/redirect
 	./$(BIN_DIR)/redirect $(ARGS)
