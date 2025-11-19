@@ -14,9 +14,11 @@ int *tab;
 typedef struct {
     int tid;
     size_t start, end;
-    int local_min;
-    int local_max;
 } thread_arg_t;
+
+int gmin = INT_MAX;
+int gmax = INT_MIN;
+pthread_mutex_t gmutex = PTHREAD_MUTEX_INITIALIZER;
 
 double elapsed(struct timeval a, struct timeval b) {
     return (b.tv_sec - a.tv_sec) + (b.tv_usec - a.tv_usec) / 1e6;
@@ -24,15 +26,25 @@ double elapsed(struct timeval a, struct timeval b) {
 
 void *thread_func(void *arg) {
     thread_arg_t *t = (thread_arg_t*)arg;
-    int lmin = INT_MAX;
-    int lmax = INT_MIN;
+    int lmin = INT_MAX, lmax = INT_MIN;
     for (size_t i = t->start; i < t->end; ++i) {
         int v = tab[i];
         if (v < lmin) lmin = v;
         if (v > lmax) lmax = v;
     }
-    t->local_min = lmin;
-    t->local_max = lmax;
+
+    pthread_mutex_lock(&gmutex);
+
+    if (lmin < gmin) {
+      gmin = lmin;
+    }
+
+    if (lmax > gmax) {
+      gmax = lmax;
+    }
+
+    pthread_mutex_unlock(&gmutex);
+
     return NULL;
 }
 
@@ -64,18 +76,16 @@ int main(int argc, char** argv) {
 
     size_t base = SIZE / nthreads;
     size_t rem = SIZE % nthreads;
+    size_t offset = 0;
 
     struct timeval t0, t1;
     gettimeofday(&t0, NULL);
 
-    size_t offset = 0;
     for (int t = 0; t < nthreads; ++t) {
         size_t chunk = base + (t < (int)rem ? 1 : 0);
         args[t].tid = t;
         args[t].start = offset;
         args[t].end = offset + chunk;
-        args[t].local_min = INT_MAX;
-        args[t].local_max = INT_MIN;
         pthread_create(&threads[t], NULL, thread_func, &args[t]);
         offset += chunk;
     }
@@ -83,8 +93,6 @@ int main(int argc, char** argv) {
     int gmin = INT_MAX, gmax = INT_MIN;
     for (int t = 0; t < nthreads; ++t) {
         pthread_join(threads[t], NULL);
-        if (args[t].local_min < gmin) gmin = args[t].local_min;
-        if (args[t].local_max > gmax) gmax = args[t].local_max;
     }
 
     gettimeofday(&t1, NULL);
