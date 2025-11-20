@@ -28,6 +28,7 @@ jobs:
             02-syscalls-process-1-fork,
             02-syscalls-process-2-redirect,
             02-syscalls-process-3-redirect-pipe,
+            03-thread-1-sort,
             projet-ctar,
           ]
 
