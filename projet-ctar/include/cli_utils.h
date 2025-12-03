@@ -62,9 +62,9 @@ void free_if_needed(void* to_free);
 char* dup_optarg_str();
 
 /**
- * @brief Free all allocated parameters in  `cli_params` struct.
+ * @brief Free all allocated parameters in `cli_params` struct.
  *
- * @param params
+ * @param params Pointer to a `cli_params` struct whose dynamically allocated members will be freed.
  */
 void cli_free_params(struct cli_params* params);
 
