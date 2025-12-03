@@ -41,12 +41,4 @@ int ctar_extract(const char* archive_path, const char* target_directory);
  */
 int ctar_create(const char* archive_path, const char* directory_path);
 
-/**
- * @brief Create a directory and any necessary parent directories.
- *
- * @param directory_path Path of the directory to create.
- * @return 0 on success, -1 on error (errno set).
- */
-int ctar_directory(const char* directory_path);
-
 #endif
