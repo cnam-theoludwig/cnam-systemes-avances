@@ -13,6 +13,22 @@
 #define TAR_BLOCK_SIZE 512
 
 /**
+ * @brief Maximum path buffer size for path operations.
+ *
+ * Used for buffers that hold file paths during archive extraction,
+ * creation, and directory operations.
+ */
+#define MAX_PATH_BUFFER_SIZE 4096
+
+/**
+ * @brief Buffer size for file copy operations.
+ *
+ * Used for the internal buffer when copying file data between
+ * file descriptors during archive extraction and creation.
+ */
+#define COPY_BUFFER_SIZE 8192
+
+/**
  * magic contains the magic value "ustar" followed by a NUL byte to indicate
  * that this is a POSIX standard archive. Full compliance requires the uname
  * and gname fields be properly set.

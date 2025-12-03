@@ -107,7 +107,7 @@ int ctar_extract(const char* archive_path, const char* target_directory) {
       dprintf(STDOUT_FILENO, "extracting: %s\n", parsed.full_name);
     }
 
-    char directory_path[4096];
+    char directory_path[MAX_PATH_BUFFER_SIZE];
     ctar_helper_dirname(parsed.full_name, directory_path, sizeof(directory_path));
     if (strcmp(directory_path, ".") != 0) {
       ctar_helper_mkdir_p(directory_path, 0755);
