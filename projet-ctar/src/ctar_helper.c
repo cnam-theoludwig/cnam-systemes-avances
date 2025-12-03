@@ -235,7 +235,7 @@ int ctar_helper_skip_padding(int file_descriptor, size_t size_bytes) {
 }
 
 int ctar_helper_copy_exact(int input_fd, int output_fd, size_t size_bytes) {
-  unsigned char buffer[8192];
+  unsigned char buffer[COPY_BUFFER_SIZE];
   size_t remaining = size_bytes;
 
   while (remaining > 0) {
@@ -297,7 +297,7 @@ int ctar_helper_mkdir_p(const char* path, mode_t mode) {
     return -1;
   }
 
-  char path_copy[4096];
+  char path_copy[MAX_PATH_BUFFER_SIZE];
   strncpy(path_copy, path, sizeof(path_copy) - 1);
   path_copy[sizeof(path_copy) - 1] = '\0';
 
@@ -431,7 +431,7 @@ int ctar_helper_add_directory_recursive(int archive_fd, const char* directory_pa
     base_length--;
   }
 
-  char relative_path[4096];
+  char relative_path[MAX_PATH_BUFFER_SIZE];
   if (strlen(directory_path) > base_length && directory_path[base_length] == '/') {
     strncpy(relative_path, directory_path + base_length + 1, sizeof(relative_path) - 1);
   } else {
@@ -461,7 +461,7 @@ int ctar_helper_add_directory_recursive(int archive_fd, const char* directory_pa
       continue;
     }
 
-    char full_path[4096];
+    char full_path[MAX_PATH_BUFFER_SIZE];
     snprintf(full_path, sizeof(full_path), "%s/%s", directory_path, entry->d_name);
 
     struct stat file_stat;
@@ -475,7 +475,7 @@ int ctar_helper_add_directory_recursive(int archive_fd, const char* directory_pa
         return -1;
       }
     } else {
-      char archive_entry_path[4096];
+      char archive_entry_path[MAX_PATH_BUFFER_SIZE];
       if (strlen(full_path) > base_length && full_path[base_length] == '/') {
         strncpy(archive_entry_path, full_path + base_length + 1, sizeof(archive_entry_path) - 1);
       } else {
