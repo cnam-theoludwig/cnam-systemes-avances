@@ -15,6 +15,13 @@
 #include "../include/typedef.h"
 
 /**
+ * @brief Buffer size for copying file data in bytes.
+ *
+ * Used by ctar_helper_copy_exact() for efficient file data transfer.
+ */
+#define COPY_BUFFER_SIZE 8192
+
+/**
  * @brief Read exactly size bytes unless EOF or error occurs.
  *
  * @param file_descriptor File descriptor to read from.

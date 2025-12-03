@@ -235,7 +235,7 @@ int ctar_helper_skip_padding(int file_descriptor, size_t size_bytes) {
 }
 
 int ctar_helper_copy_exact(int input_fd, int output_fd, size_t size_bytes) {
-  unsigned char buffer[8192];
+  unsigned char buffer[COPY_BUFFER_SIZE];
   size_t remaining = size_bytes;
 
   while (remaining > 0) {
