@@ -197,4 +197,15 @@ int ctar_helper_add_file(int archive_fd, const char* path, const char* archive_p
  */
 int ctar_helper_add_directory_recursive(int archive_fd, const char* directory_path, const char* base_path);
 
+/**
+ * @brief Check if a path is safe for extraction (no path traversal).
+ *
+ * Validates that the path doesn't contain components that could escape
+ * the extraction directory, such as absolute paths or ".." sequences.
+ *
+ * @param path Path to validate.
+ * @return true if the path is safe, false if it contains path traversal.
+ */
+bool ctar_helper_is_path_safe(const char* path);
+
 #endif

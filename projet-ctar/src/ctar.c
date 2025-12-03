@@ -103,6 +103,16 @@ int ctar_extract(const char* archive_path, const char* target_directory) {
       continue;
     }
 
+    if (!ctar_helper_is_path_safe(parsed.full_name)) {
+      if (is_verbose) {
+        dprintf(STDOUT_FILENO, "warning: skipping unsafe path (path traversal): %s\n", parsed.full_name);
+      }
+      size_t blocks_to_skip = ctar_helper_blocks_for_size(parsed.size_bytes);
+      off_t skip_offset = (off_t)(blocks_to_skip * TAR_BLOCK_SIZE);
+      lseek(file_descriptor, skip_offset, SEEK_CUR);
+      continue;
+    }
+
     if (is_verbose) {
       dprintf(STDOUT_FILENO, "extracting: %s\n", parsed.full_name);
     }

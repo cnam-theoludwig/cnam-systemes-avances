@@ -496,3 +496,32 @@ int ctar_helper_add_directory_recursive(int archive_fd, const char* directory_pa
   closedir(directory);
   return 0;
 }
+
+bool ctar_helper_is_path_safe(const char* path) {
+  if (path == NULL || path[0] == '\0') {
+    return false;
+  }
+
+  if (path[0] == '/') {
+    return false;
+  }
+
+  const char* current = path;
+  while (*current != '\0') {
+    if (current[0] == '.' && current[1] == '.') {
+      if (current[2] == '/' || current[2] == '\0') {
+        return false;
+      }
+    }
+
+    while (*current != '\0' && *current != '/') {
+      current++;
+    }
+
+    while (*current == '/') {
+      current++;
+    }
+  }
+
+  return true;
+}
