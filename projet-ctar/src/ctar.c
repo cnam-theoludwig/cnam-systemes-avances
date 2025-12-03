@@ -197,17 +197,3 @@ int ctar_create(const char* archive_path, const char* directory_path) {
   return 0;
 }
 
-int ctar_directory(const char* directory_path) {
-  if (is_verbose) {
-    dprintf(STDOUT_FILENO, "ctar_directory(directory_path=\"%s\")\n",
-            directory_path != NULL ? directory_path : "(null)");
-  }
-  if (directory_path == NULL) {
-    errno = EINVAL;
-    return -1;
-  }
-  if (ctar_helper_mkdir_p(directory_path, 0777) != 0) {
-    return -1;
-  }
-  return 0;
-}
