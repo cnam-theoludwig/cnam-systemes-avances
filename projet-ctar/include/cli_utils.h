@@ -15,17 +15,16 @@
 #define STDERR 2
 
 #define MAX_PATH_LENGTH 4096
-#define BUFFER_SIZE 4096
 
-#define USAGE_SYNTAX "--list ARCHIVE_FILE"
+#define USAGE_SYNTAX "[OPTIONS]"
 #define USAGE_PARAMS \
   "OPTIONS:\n\
-  -l, --list ARCHIVE_FILE\n\
-  -e, --extract ARCHIVE_FILE\n\
-  -c, --create ARCHIVE_FILE\n\
-  -d, --directory DIRECTORY_TO_PROCESS\n\
+  -l, --list       ARCHIVE_FILE\n\
+  -e, --extract    ARCHIVE_FILE\n\
+  -c, --create     ARCHIVE_FILE\n\
+  -d, --directory  DIRECTORY_TO_PROCESS\n\
   -z, --compress\n\
-***\n\
+\n\
   -v, --verbose : enable *verbose* mode\n\
   -h, --help    : display this help\n\
 "
@@ -61,6 +60,13 @@ void free_if_needed(void* to_free);
  * @return char*
  */
 char* dup_optarg_str();
+
+/**
+ * @brief Free all allocated parameters in `cli_params` struct.
+ *
+ * @param params Pointer to a `cli_params` struct whose dynamically allocated members will be freed.
+ */
+void cli_free_params(struct cli_params* params);
 
 /**
  * @brief CLI main procedure.

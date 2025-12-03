@@ -9,6 +9,9 @@ gcov
 html
 latex
 *.txt
+*.tar
 output
 template
 jenkins.war
+test-tar
+_codeql_detected_source_root

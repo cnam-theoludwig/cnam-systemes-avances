@@ -1,8 +1,53 @@
 # PROJET : Archivage « ctar » - à réaliser en binôme - Durée approximative ~ 12h00min
 
-À l'aide des supports de cours et des mementos et des exercices achevés en TP et du manuel Linux réalisez :
+[Rapport](./RAPPORT.md)
 
-(Tout code ou implémentation compilant ou non sera étudié, toute fois le barème sera adapté)
+## Utilisation
+
+```sh
+# Consulter la page de manuel
+man --local-file ./ctar.1
+
+# Compiler et exécuter séparément
+make
+./bin/ctar
+
+# Compiler et exécuter (dans la suite des exemples on utilisera cette méthode, pour plus de simplicité)
+make run
+
+# Afficher l'aide
+make run OPTIONS="--help"
+
+# Créer une archive tar
+mkdir test-tar
+echo "This is a test file." > test-tar/test_file.txt
+echo "Another test file." > test-tar/another_file.txt
+mkdir test-tar/subdir
+echo "File in subdir." > test-tar/subdir/file_in_subdir.txt
+make run OPTIONS="--verbose --create ./archive.tar --directory ./test-tar"
+
+# Lister le contenu d'une archive tar
+make run OPTIONS="--verbose --list ./archive.tar"
+
+# Extraire une archive tar
+make run OPTIONS="--verbose --extract ./archive.tar --directory ./test-tar/archive"
+```
+
+### Développement
+
+```sh
+# Compiler le projet
+make
+
+# Lint avec clang-format
+make lint
+
+# Génère la documentation avec doxygen
+make doc
+
+# Couverture de code avec gcov
+make coverage
+```
 
 ## I - Synopsis
 
@@ -24,9 +69,7 @@ Prompt> ctar -c my_archive.tar file1 file2 file3
 
 ## II - Démarche
 
-En préambule il faut absolument bien lire la page de manuel de `tar(5)`, et éventuellement compléter cette
-lecture par d'autres documents. Il est recommandé d'utiliser le format GNU tar archives. Attention il est important de
-faire attention à la description des différents champs et de leur définition.
+En préambule il faut absolument bien lire la page de manuel de [`tar(5)`](https://man.archlinux.org/man/tar.5.en), et éventuellement compléter cette lecture par d'autres documents. Il est recommandé d'utiliser le format GNU tar archives. Attention il est important de faire attention à la description des différents champs et de leur définition.
 
 Il faut faire attention au fait qu'une archive tar est une succession de **blocs de 512 octets**, qu'il est préférable de lire l'un après l'autre dans leur ensemble. Ainsi dans le cadre du parcours d'une archive il sera nécessaire de lire de façon répétée les entêtes correspondant au format étudié pour chaque item composant cette dernière.
 

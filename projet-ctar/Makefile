@@ -10,7 +10,6 @@ CC_SANITIZER_FLAGS=-fsanitize=address -fsanitize=undefined
 # CC_SANITIZER_FLAGS =
 
 CC=gcc
-# CFLAGS=-Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -std=c17 -pedantic -pedantic-errors -O3 -c
 CFLAGS=-Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -O3 -c
 LDFLAGS=${CC_SANITIZER_FLAGS} -I ./${INC_DIR}/
 GCOVFLAGS=-O0 --coverage -Wall -g -I ./${INC_DIR}/
@@ -46,7 +45,7 @@ doc:
 
 coverage: $(GCOV_DIR)/$(GEXEC)
 	./$(GCOV_DIR)/$(GEXEC) -h
-	./$(GCOV_DIR)/$(GEXEC) ${ARGS}
+	./$(GCOV_DIR)/$(GEXEC) ${OPTIONS}
 	lcov -o $(GCOV_DIR)/$(LCOV_REPORT) -c -f -d $(GCOV_DIR)
 	genhtml -o $(GCOV_DIR)/report $(GCOV_DIR)/$(LCOV_REPORT)
 
@@ -60,7 +59,7 @@ clean:
 
 .PHONY: run
 run: $(BIN_DIR)/$(EXEC)
-	./bin/$(EXEC) ${ARGS}
+	./bin/$(EXEC) ${OPTIONS}
 
 .PHONY: lint
 lint:
