@@ -1,0 +1,149 @@
+.\" Page de manuel pour ctar
+.TH CTAR 1 "Décembre 2025" "ctar 1.0" "Commandes utilisateur"
+
+.SH NOM
+ctar \- créer, extraire et lister des archives tar
+
+.SH SYNOPSIS
+.B ctar
+.RB [ \-v | \-\-verbose ]
+.RB [ \-l | \-\-list ]
+.I ARCHIVE_FILE
+.br
+.B ctar
+.RB [ \-v | \-\-verbose ]
+.RB [ \-e | \-\-extract ]
+.I ARCHIVE_FILE
+.RB [ \-d | \-\-directory
+.IR DIRECTORY_TO_PROCESS ]
+.br
+.B ctar
+.RB [ \-v | \-\-verbose ]
+.RB [ \-c | \-\-create ]
+.I ARCHIVE_FILE
+.RB \-d | \-\-directory
+.I REPERTOIRE_SOURCE
+.br
+.B ctar
+.RB [ \-h | \-\-help ]
+
+.SH DESCRIPTION
+.B ctar
+est une implémentation simplifiée de la commande
+.BR tar (1)
+qui peut créer, extraire et lister des archives au format GNU POSIX 1003.1-1988 ("ustar").
+
+Le programme fonctionne selon trois modes : lister, extraire ou créer.
+
+.B ctar
+traite les archives comme des séquences de blocs de 512 octets, en suivant la spécification du format ustar. Les fichiers réguliers et les répertoires sont pris en charge, tandis que les types de fichiers spéciaux (liens symboliques, fichiers de périphériques, etc.) sont ignorés lors de l'extraction mais préservés lors du listage.
+
+.SH OPTIONS
+.TP
+.BR \-l ", " \-\-list " " \fIARCHIVE_FILE\fR
+Liste le contenu de l'archive tar spécifiée. Chaque nom de fichier et de répertoire est affiché sur une ligne séparée. Les noms de répertoires incluent un / finale.
+
+.TP
+.BR \-e ", " \-\-extract " " \fIARCHIVE_FILE\fR
+Extrait tous les fichiers et répertoires de l'archive tar spécifiée. Les fichiers sont extraits vers leurs chemins relatifs tels qu'ils sont stockés dans l'archive. Si l'option
+.B \-d
+est également spécifiée, l'extraction se fait dans le répertoire cible.
+
+.TP
+.BR \-c ", " \-\-create " " \fIARCHIVE_FILE\fR
+Crée une nouvelle archive tar à partir du contenu du répertoire spécifié avec l'option
+.B \-\-directory
+. Le répertoire est traité de manière récursive, incluant tous les sous-répertoires et fichiers. Cette option nécessite que l'option
+.B \-\-directory
+soit spécifiée.
+
+.TP
+.BR \-d ", " \-\-directory " " \fIREPERTOIRE\fR
+Spécifie le répertoire cible pour les opérations d'extraction ou le répertoire source pour les opérations de création. Pour l'extraction, si le répertoire n'existe pas, il sera créé automatiquement. Pour la création, le répertoire doit exister et être lisible.
+
+.TP
+.BR \-v ", " \-\-verbose
+Active le mode verbeux. Affiche des informations détaillées sur les opérations en cours, incluant les noms des fichiers traités et tous les avertissements ou erreurs rencontrés.
+
+.TP
+.BR \-h ", " \-\-help
+Affiche les informations d'utilisation et quitte.
+
+.SH EXEMPLES
+Lister le contenu d'une archive :
+.RS
+.B ctar \-\-list archive.tar
+.br
+.B ctar \-v \-l archive.tar
+.RE
+
+Extraire une archive dans le répertoire courant :
+.RS
+.B ctar \-\-extract archive.tar
+.br
+.B ctar \-e archive.tar
+.RE
+
+Extraire une archive dans un répertoire spécifique :
+.RS
+.B ctar \-\-extract archive.tar \-\-directory /tmp/extracted
+.br
+.B ctar \-v \-e archive.tar \-d ./mon_dossier
+.RE
+
+Créer une archive à partir d'un répertoire :
+.RS
+.B ctar \-\-create mon_archive.tar \-\-directory ./dossier_source
+.br
+.B ctar \-v \-c sauvegarde.tar \-d /home/utilisateur/documents
+.RE
+
+.SH CODE DE SORTIE
+.B ctar
+se termine avec l'une des valeurs suivantes :
+.TP
+.B 0
+Succès. L'opération s'est terminée sans erreur.
+.TP
+.B Non-zéro
+Une erreur s'est produite. Cela peut indiquer des erreurs du système de fichiers, un format d'archive invalide, des problèmes de permissions ou des arguments de ligne de commande invalides. Les détails des erreurs sont écrits sur la sortie d'erreur standard lorsque le mode verbeux est activé.
+
+.SH FICHIERS
+.B ctar
+opère sur les fichiers et les répertoires. Il ne suit pas les liens symboliques lors de la création d'archives, et les fichiers spéciaux (nœuds de périphériques, FIFO, etc.) ne sont pas pris en charge pour l'extraction, bien qu'ils puissent être listés s'ils sont présents dans une archive.
+
+Les archives doivent être conformes au format ustar POSIX 1003.1-1988. Le champ magique doit contenir "ustar" suivi d'un octet NUL, et le champ version doit être "00".
+
+.SH LIMITATIONS
+.IP \(bu 2
+Seuls les fichiers réguliers et les répertoires sont entièrement pris en charge pour l'extraction.
+.IP \(bu 2
+Les permissions de fichier, la propriété et les horodatages sont préservés lors de l'extraction mais peuvent être soumis aux limitations de umask et du système de fichiers.
+.IP \(bu 2
+Les archives ne sont pas compressées. Pour les archives compressées, des outils externes comme
+.BR gzip (1)
+doivent être utilisés séparément.
+.IP \(bu 2
+Les noms de chemins sont limités par les contraintes du format ustar (100 caractères pour le champ nom, 155 pour le préfixe).
+.IP \(bu 2
+Les liens physiques et symboliques sont stockés dans l'archive lors de la création mais ne sont pas restaurés lors de l'extraction.
+
+.SH DIAGNOSTICS
+Les messages d'erreur sont écrits sur la sortie d'erreur standard. Lorsque le mode verbeux est activé, des informations de diagnostic supplémentaires sont fournies, incluant :
+.IP \(bu 2
+Noms des fichiers en cours de traitement
+.IP \(bu 2
+Avertissements sur les types de fichiers non pris en charge
+.IP \(bu 2
+Confirmation des opérations réussies
+
+.SH VOIR AUSSI
+.BR tar (1),
+.BR gzip (1),
+.BR gunzip (1),
+.BR mkdir (1),
+.BR chmod (1)
+
+Le manuel GNU tar : info tar
+
+Spécification du format ustar POSIX.1-1988.

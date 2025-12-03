@@ -9,6 +9,8 @@ gcov
 html
 latex
 *.txt
+*.tar
 output
 template
 jenkins.war
+test-tar
