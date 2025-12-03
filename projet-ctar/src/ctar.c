@@ -99,7 +99,19 @@ int ctar_extract(const char* archive_path, const char* target_directory) {
       }
       size_t blocks_to_skip = ctar_helper_blocks_for_size(parsed.size_bytes);
       off_t skip_offset = (off_t)(blocks_to_skip * TAR_BLOCK_SIZE);
-      lseek(file_descriptor, skip_offset, SEEK_CUR);
+      if (lseek(file_descriptor, skip_offset, SEEK_CUR) == (off_t)-1) {
+        unsigned char buffer[TAR_BLOCK_SIZE];
+        size_t remaining_bytes = blocks_to_skip * TAR_BLOCK_SIZE;
+        while (remaining_bytes > 0) {
+          size_t chunk_size = remaining_bytes < sizeof(buffer) ? remaining_bytes : sizeof(buffer);
+          ssize_t skip_result = ctar_helper_safe_read(file_descriptor, buffer, chunk_size);
+          if (skip_result <= 0) {
+            close(file_descriptor);
+            return -1;
+          }
+          remaining_bytes -= (size_t)skip_result;
+        }
+      }
       continue;
     }
 
@@ -127,7 +139,19 @@ int ctar_extract(const char* archive_path, const char* target_directory) {
         }
         size_t blocks_to_skip = ctar_helper_blocks_for_size(parsed.size_bytes);
         off_t skip_offset = (off_t)(blocks_to_skip * TAR_BLOCK_SIZE);
-        lseek(file_descriptor, skip_offset, SEEK_CUR);
+        if (lseek(file_descriptor, skip_offset, SEEK_CUR) == (off_t)-1) {
+          unsigned char buffer[TAR_BLOCK_SIZE];
+          size_t remaining_bytes = blocks_to_skip * TAR_BLOCK_SIZE;
+          while (remaining_bytes > 0) {
+            size_t chunk_size = remaining_bytes < sizeof(buffer) ? remaining_bytes : sizeof(buffer);
+            ssize_t skip_result = ctar_helper_safe_read(file_descriptor, buffer, chunk_size);
+            if (skip_result <= 0) {
+              close(file_descriptor);
+              return -1;
+            }
+            remaining_bytes -= (size_t)skip_result;
+          }
+        }
         continue;
       }
 
@@ -150,7 +174,19 @@ int ctar_extract(const char* archive_path, const char* target_directory) {
       }
       size_t blocks_to_skip = ctar_helper_blocks_for_size(parsed.size_bytes);
       off_t skip_offset = (off_t)(blocks_to_skip * TAR_BLOCK_SIZE);
-      lseek(file_descriptor, skip_offset, SEEK_CUR);
+      if (lseek(file_descriptor, skip_offset, SEEK_CUR) == (off_t)-1) {
+        unsigned char buffer[TAR_BLOCK_SIZE];
+        size_t remaining_bytes = blocks_to_skip * TAR_BLOCK_SIZE;
+        while (remaining_bytes > 0) {
+          size_t chunk_size = remaining_bytes < sizeof(buffer) ? remaining_bytes : sizeof(buffer);
+          ssize_t skip_result = ctar_helper_safe_read(file_descriptor, buffer, chunk_size);
+          if (skip_result <= 0) {
+            close(file_descriptor);
+            return -1;
+          }
+          remaining_bytes -= (size_t)skip_result;
+        }
+      }
     }
   }
 
