@@ -242,4 +242,3 @@ int ctar_create(const char* archive_path, const char* directory_path) {
   close(archive_fd);
   return 0;
 }
-

@@ -61,13 +61,6 @@ clean:
 run: $(BIN_DIR)/$(EXEC)
 	./bin/$(EXEC) ${OPTIONS}
 
-install-man: ctar.1
-	install -d $(MANDIR)
-	install -m 644 ctar.1 $(MANDIR)/
-
-uninstall-man:
-	rm -f $(MANDIR)/ctar.1
-
 .PHONY: lint
 lint:
 	clang-format --Werror --dry-run ${SRC} ${INC}

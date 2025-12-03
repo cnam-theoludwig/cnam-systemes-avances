@@ -42,7 +42,7 @@ make
 # Lint avec clang-format
 make lint
 
-# Génére la documentation avec doxygen
+# Génère la documentation avec doxygen
 make doc
 
 # Couverture de code avec gcov
