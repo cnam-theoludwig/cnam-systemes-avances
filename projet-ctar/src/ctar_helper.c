@@ -37,8 +37,8 @@ static ssize_t ctar_io_write(struct ctar_handle* handle, const void* buf, size_t
       unsigned int chunk_size = (remaining > UINT_MAX) ? UINT_MAX : (unsigned int)remaining;
 
       int bytes = gzwrite(handle->gz_file, src + total_written, chunk_size);
-      if (bytes == 0) {
-        return -1;  // Error writing
+      if (bytes != (int)chunk_size) {
+        return -1;  // Error or partial write
       }
       total_written += (size_t)bytes;
     }
