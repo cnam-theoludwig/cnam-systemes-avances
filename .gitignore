@@ -10,6 +10,7 @@ html
 latex
 *.txt
 *.tar
+*.tar.gz
 output
 template
 jenkins.war

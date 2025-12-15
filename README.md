@@ -29,7 +29,8 @@ Code réalisé dans le cadre de la formation [Ingénieur en Informatique et Syst
 - [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html)
 - [Doxygen](https://www.doxygen.nl/)
 - [LCOV Code Coverage](https://github.com/linux-test-project/lcov)
-- [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/) pour le TP n°4
+- [zlib](https://github.com/madler/zlib) pour le projet ctar
 
 ## Utilisation
 

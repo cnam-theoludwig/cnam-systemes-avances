@@ -37,8 +37,9 @@ int ctar_extract(const char* archive_path, const char* target_directory);
  *
  * @param archive_path Path where the archive will be created.
  * @param directory_path Directory to archive.
+ * @param compress If true, compress the archive using gzip.
  * @return 0 on success, -1 on error (errno set).
  */
-int ctar_create(const char* archive_path, const char* directory_path);
+int ctar_create(const char* archive_path, const char* directory_path, bool compress);
 
 #endif

@@ -39,11 +39,10 @@ Nous avons respecté les exigences techniques et fonctionnelles définies dans l
 
 ### Fonctionnalités métiers optionnelles (FMO)
 
-(pas implémentées)
+- FMO01 - La prise en charge de la compression d'une archive tar (via la libraire zlib). `ctar --create ./archive.tar.gz --directory ./test-tar --compress`
+- FMO02 - La prise en charge de la décompression d'une archive tar.gz (gzip).
 
 <!--
-- FMO01 - La prise en charge de la compression d'une archive tar (via la libraire zlib).
-- FMO02 - La prise en charge de la décompression d'une archive tar.gz (gzip).
 - FMO03 - La réalisation d'une interface en mode console « tui » via la librairie ncurses.
 -->
 
