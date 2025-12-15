@@ -47,8 +47,8 @@ struct ctar_helper_parsed_header {
 /**
  * @brief Opens an archive file, handling compression transparently.
  *
- * For reading, it uses gzdopen to automatically detect compression.
- * For writing, it uses gzdopen only if compress is true.
+ * For reading, gzdopen is always used; it transparently handles both compressed and uncompressed files.
+ * For writing, gzdopen is used only if compress is true.
  *
  * @param path Path to the file.
  * @param flags Open flags (e.g. O_RDONLY, O_WRONLY | O_CREAT).
