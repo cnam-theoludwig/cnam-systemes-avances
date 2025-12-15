@@ -3,6 +3,10 @@
 extern bool is_verbose;
 
 static ssize_t ctar_io_read(struct ctar_handle* handle, void* buf, size_t len) {
+  if (handle == NULL) {
+    errno = EINVAL;
+    return -1;
+  }
   if (handle->use_zlib) {
     int bytes = gzread(handle->gz_file, buf, (unsigned int)len);
     if (bytes < 0) {
@@ -14,6 +18,10 @@ static ssize_t ctar_io_read(struct ctar_handle* handle, void* buf, size_t len) {
 }
 
 static ssize_t ctar_io_write(struct ctar_handle* handle, const void* buf, size_t len) {
+  if (handle == NULL) {
+    errno = EINVAL;
+    return -1;
+  }
   if (handle->use_zlib) {
     int bytes = gzwrite(handle->gz_file, buf, (unsigned int)len);
     if (bytes == 0 && len > 0) {
@@ -25,6 +33,10 @@ static ssize_t ctar_io_write(struct ctar_handle* handle, const void* buf, size_t
 }
 
 static off_t ctar_io_seek(struct ctar_handle* handle, off_t offset, int whence) {
+  if (handle == NULL) {
+    errno = EINVAL;
+    return -1;
+  }
   if (handle->use_zlib) {
     return (off_t)gzseek(handle->gz_file, (z_off_t)offset, whence);
   }
