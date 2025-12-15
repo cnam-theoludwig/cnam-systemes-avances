@@ -85,7 +85,10 @@ int ctar_extract(const char* archive_path, const char* target_directory) {
       if (is_verbose) {
         dprintf(STDOUT_FILENO, "warning: empty name in header, skipping\n");
       }
-      ctar_helper_skip_entry(&archive, parsed.size_bytes);
+      if (ctar_helper_skip_entry(&archive, parsed.size_bytes) != 0) {
+        ctar_helper_close(&archive);
+        return -1;
+      }
       continue;
     }
 
@@ -93,7 +96,10 @@ int ctar_extract(const char* archive_path, const char* target_directory) {
       if (is_verbose) {
         dprintf(STDOUT_FILENO, "warning: skipping unsafe path: %s\n", parsed.full_name);
       }
-      ctar_helper_skip_entry(&archive, parsed.size_bytes);
+      if (ctar_helper_skip_entry(&archive, parsed.size_bytes) != 0) {
+        ctar_helper_close(&archive);
+        return -1;
+      }
       continue;
     }
 
@@ -119,7 +125,10 @@ int ctar_extract(const char* archive_path, const char* target_directory) {
         if (is_verbose) {
           dprintf(STDOUT_FILENO, "warning: failed to create file %s\n", parsed.full_name);
         }
-        ctar_helper_skip_entry(&archive, parsed.size_bytes);
+        if (ctar_helper_skip_entry(&archive, parsed.size_bytes) != 0) {
+          ctar_helper_close(&archive);
+          return -1;
+        }
         continue;
       }
 
@@ -143,7 +152,10 @@ int ctar_extract(const char* archive_path, const char* target_directory) {
       if (is_verbose) {
         dprintf(STDOUT_FILENO, "warning: unsupported type %c for %s\n", parsed.typeflag, parsed.full_name);
       }
-      ctar_helper_skip_entry(&archive, parsed.size_bytes);
+      if (ctar_helper_skip_entry(&archive, parsed.size_bytes) != 0) {
+        ctar_helper_close(&archive);
+        return -1;
+      }
     }
   }
 
