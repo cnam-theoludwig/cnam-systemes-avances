@@ -1,25 +1,48 @@
 #include "../include/ctar_helper.h"
 
+#include <limits.h>
+
 extern bool is_verbose;
 
 static ssize_t ctar_io_read(struct ctar_handle* handle, void* buf, size_t len) {
   if (handle->use_zlib) {
-    int bytes = gzread(handle->gz_file, buf, (unsigned int)len);
-    if (bytes < 0) {
-      return -1;
+    size_t total_read = 0;
+    unsigned char* dest = (unsigned char*)buf;
+
+    while (total_read < len) {
+      size_t remaining = len - total_read;
+      unsigned int chunk_size = (remaining > UINT_MAX) ? UINT_MAX : (unsigned int)remaining;
+
+      int bytes = gzread(handle->gz_file, dest + total_read, chunk_size);
+      if (bytes < 0) {
+        return -1;
+      }
+      if (bytes == 0) {
+        break;  // EOF reached
+      }
+      total_read += (size_t)bytes;
     }
-    return (ssize_t)bytes;
+    return (ssize_t)total_read;
   }
   return read(handle->fd, buf, len);
 }
 
 static ssize_t ctar_io_write(struct ctar_handle* handle, const void* buf, size_t len) {
   if (handle->use_zlib) {
-    int bytes = gzwrite(handle->gz_file, buf, (unsigned int)len);
-    if (bytes == 0 && len > 0) {
-      return -1;
+    size_t total_written = 0;
+    const unsigned char* src = (const unsigned char*)buf;
+
+    while (total_written < len) {
+      size_t remaining = len - total_written;
+      unsigned int chunk_size = (remaining > UINT_MAX) ? UINT_MAX : (unsigned int)remaining;
+
+      int bytes = gzwrite(handle->gz_file, src + total_written, chunk_size);
+      if (bytes == 0) {
+        return -1;  // Error writing
+      }
+      total_written += (size_t)bytes;
     }
-    return (ssize_t)bytes;
+    return (ssize_t)total_written;
   }
   return write(handle->fd, buf, len);
 }
