@@ -35,7 +35,7 @@ static ssize_t ctar_io_write(struct ctar_handle* handle, const void* buf, size_t
 static off_t ctar_io_seek(struct ctar_handle* handle, off_t offset, int whence) {
   if (handle == NULL) {
     errno = EINVAL;
-    return (off_t)-1;
+    return -1;
   }
   if (handle->use_zlib) {
     return (off_t)gzseek(handle->gz_file, (z_off_t)offset, whence);
