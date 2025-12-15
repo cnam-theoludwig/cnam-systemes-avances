@@ -18,19 +18,19 @@ make run
 # Afficher l'aide
 make run OPTIONS="--help"
 
-# Créer une archive tar
+# Créer une archive tar compressée à partir d'un répertoire
 mkdir test-tar
 echo "This is a test file." > test-tar/test_file.txt
 echo "Another test file." > test-tar/another_file.txt
 mkdir test-tar/subdir
 echo "File in subdir." > test-tar/subdir/file_in_subdir.txt
-make run OPTIONS="--verbose --create ./archive.tar --directory ./test-tar"
+make run OPTIONS="--verbose --compress --create ./archive.tar.gz --directory ./test-tar"
 
-# Lister le contenu d'une archive tar
-make run OPTIONS="--verbose --list ./archive.tar"
+# Lister le contenu d'une archive compressée tar.gz
+make run OPTIONS="--verbose --list ./archive.tar.gz"
 
-# Extraire une archive tar
-make run OPTIONS="--verbose --extract ./archive.tar --directory ./test-tar/archive"
+# Extraire une archive compressée tar.gz
+make run OPTIONS="--verbose --extract ./archive.tar.gz --directory ./test-tar/archive"
 ```
 
 ### Développement

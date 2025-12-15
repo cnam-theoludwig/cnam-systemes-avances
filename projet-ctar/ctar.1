@@ -2,7 +2,7 @@
 .TH CTAR 1 "Décembre 2025" "ctar 1.0" "Commandes utilisateur"
 
 .SH NOM
-ctar \- créer, extraire et lister des archives tar
+ctar \- créer, extraire et lister des archives tar (avec support gzip)
 
 .SH SYNOPSIS
 .B ctar
@@ -23,6 +23,7 @@ ctar \- créer, extraire et lister des archives tar
 .I ARCHIVE_FILE
 .RB \-d | \-\-directory
 .I DIRECTORY_TO_PROCESS_SOURCE
+.RB [ \-z | \-\-compress ]
 .br
 .B ctar
 .RB [ \-h | \-\-help ]
@@ -33,7 +34,7 @@ est une implémentation simplifiée de la commande
 .BR tar (1)
 qui peut créer, extraire et lister des archives au format GNU POSIX 1003.1-1988 ("ustar").
 
-Le programme fonctionne selon trois modes : lister, extraire ou créer.
+Le programme fonctionne selon trois modes : lister, extraire ou créer. Il supporte également la compression et la décompression transparente au format \fBgzip\fR (via la librairie zlib).
 
 .B ctar
 traite les archives comme des séquences de blocs de 512 octets, en suivant la spécification du format ustar.
@@ -41,13 +42,13 @@ traite les archives comme des séquences de blocs de 512 octets, en suivant la s
 .SH OPTIONS
 .TP
 .BR \-l ", " \-\-list " " \fIARCHIVE_FILE\fR
-Liste le contenu de l'archive tar spécifiée. Chaque nom de fichier et de répertoire est affiché sur une ligne séparée. Les noms de répertoires incluent un / finale.
+Liste le contenu de l'archive tar spécifiée. Chaque nom de fichier et de répertoire est affiché sur une ligne séparée. Les noms de répertoires incluent un / finale. La décompression est automatique si le fichier est au format gzip.
 
 .TP
 .BR \-e ", " \-\-extract " " \fIARCHIVE_FILE\fR
 Extrait tous les fichiers et répertoires de l'archive tar spécifiée. Les fichiers sont extraits vers leurs chemins relatifs tels qu'ils sont stockés dans l'archive. Si l'option
 .B \-d
-est également spécifiée, l'extraction se fait dans le répertoire cible.
+est également spécifiée, l'extraction se fait dans le répertoire cible. La décompression est automatique si le fichier est au format gzip.
 
 .TP
 .BR \-c ", " \-\-create " " \fIARCHIVE_FILE\fR
@@ -59,6 +60,12 @@ Crée une nouvelle archive tar à partir du contenu du répertoire spécifié av
 Spécifie le répertoire cible pour les opérations d'extraction ou le répertoire source pour les opérations de création. Pour l'extraction, si le répertoire n'existe pas, il sera créé automatiquement. Pour la création, le répertoire doit exister et être lisible.
 
 .TP
+.BR \-z ", " \-\-compress
+Active la compression \fBgzip\fR (via zlib) lors de la création d'une archive.
+.br
+Pour les opérations de listage (\fB-l\fR) et d'extraction (\fB-e\fR), cette option est facultative car \fBctar\fR détecte automatiquement si l'archive est compressée ou non.
+
+.TP
 .BR \-v ", " \-\-verbose
 Active le mode verbeux. Affiche des informations détaillées sur les opérations en cours, incluant les noms des fichiers traités et tous les avertissements ou erreurs rencontrés.
 
@@ -67,32 +74,33 @@ Active le mode verbeux. Affiche des informations détaillées sur les opération
 Affiche les informations d'utilisation et quitte.
 
 .SH EXEMPLES
-Lister le contenu d'une archive :
+Lister le contenu d'une archive (standard ou compressée) :
 .RS
 .B ctar \-\-list archive.tar
 .br
-.B ctar \-v \-l archive.tar
+.B ctar \-l archive.tar.gz
 .RE
 
-Extraire une archive dans le répertoire courant :
+Extraire une archive dans le répertoire courant (décompression automatique) :
 .RS
-.B ctar \-\-extract archive.tar
-.br
-.B ctar \-e archive.tar
+.B ctar \-\-extract archive.tar.gz
 .RE
 
 Extraire une archive dans un répertoire spécifique :
 .RS
-.B ctar \-\-extract archive.tar \-\-directory /tmp/extracted
-.br
-.B ctar \-v \-e archive.tar \-d ./mon_dossier
+.B ctar \-v \-e archive.tar.gz \-d ./mon_dossier
 .RE
 
-Créer une archive à partir d'un répertoire :
+Créer une archive standard (non compressée) :
 .RS
 .B ctar \-\-create mon_archive.tar \-\-directory ./dossier_source
+.RE
+
+Créer une archive compressée (.tar.gz) :
+.RS
+.B ctar \-\-create backup.tar.gz \-\-directory ./docs \-\-compress
 .br
-.B ctar \-v \-c sauvegarde.tar \-d /home/utilisateur/documents
+.B ctar \-c backup.tar.gz \-d ./docs \-z
 .RE
 
 .SH CODE DE SORTIE
@@ -108,10 +116,7 @@ Une erreur s'est produite. Cela peut indiquer des erreurs du système de fichier
 .SH VOIR AUSSI
 .BR tar (1),
 .BR gzip (1),
-.BR gunzip (1),
-.BR mkdir (1),
-.BR chmod (1)
-
-Le manuel GNU tar : info tar
+.BR zlib (3),
+.BR mkdir (1)
 
 Spécification du format ustar POSIX.1-1988.

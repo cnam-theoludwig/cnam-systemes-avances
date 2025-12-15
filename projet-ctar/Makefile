@@ -11,7 +11,7 @@ CC_SANITIZER_FLAGS=-fsanitize=address -fsanitize=undefined
 
 CC=gcc
 CFLAGS=-Wall -Wextra -Wfloat-equal -Wundef -Wno-unused-variable -O3 -c
-LDFLAGS=${CC_SANITIZER_FLAGS} -I ./${INC_DIR}/
+LDFLAGS=${CC_SANITIZER_FLAGS} -I ./${INC_DIR}/ -lz
 GCOVFLAGS=-O0 --coverage -Wall -g -I ./${INC_DIR}/
 LCOV_REPORT=report.info
 

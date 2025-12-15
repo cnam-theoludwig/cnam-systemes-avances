@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
       cli_print_usage(argv[0]);
       result_code = -1;
     } else {
-      result_code = ctar_create(cli_params.create_archive_file, cli_params.directory_to_process);
+      result_code = ctar_create(cli_params.create_archive_file, cli_params.directory_to_process, cli_params.is_compress);
     }
   } else {
     cli_print_usage(argv[0]);
