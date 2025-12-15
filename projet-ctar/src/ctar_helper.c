@@ -293,10 +293,11 @@ int ctar_helper_skip(struct ctar_handle* handle, size_t amount) {
   size_t remaining = amount;
   while (remaining > 0) {
     size_t to_read = remaining < sizeof(buffer) ? remaining : sizeof(buffer);
-    if (ctar_helper_safe_read(handle, buffer, to_read) <= 0) {
+    ssize_t bytes_read = ctar_helper_safe_read(handle, buffer, to_read);
+    if (bytes_read <= 0) {
       return -1;
     }
-    remaining -= to_read;
+    remaining -= (size_t)bytes_read;
   }
   return 0;
 }
