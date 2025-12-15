@@ -77,9 +77,9 @@ int ctar_helper_close(struct ctar_handle* handle) {
   }
   int ret = 0;
   if (handle->use_zlib && handle->gz_file != NULL) {
-    if (gzclose(handle->gz_file) != Z_OK && errno == 0) {
+    int gz_ret = gzclose(handle->gz_file);
+    if (gz_ret != Z_OK) {
       errno = EIO;
-    } else if (errno != 0) {
       ret = -1;
     }
   } else if (!handle->use_zlib && handle->fd >= 0) {
