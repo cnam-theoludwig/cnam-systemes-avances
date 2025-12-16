@@ -9,12 +9,10 @@ Pour les instructions détaillées de compilation et d'exécution, se référer 
 
 ---
 
-## 1. Contexte et objectif
+## 1. Contexte, objectifs et respect du cahier des charges
 
 Le projet consistait à développer, en C sous Linux, une version simplifiée de la commande `tar` nommée **ctar**.
-Nous avons respecté les exigences techniques et fonctionnelles définies dans le cahier des charges.
-
-L'objectif est d'implémenter trois fonctionnalités principales :
+Nous avons respecté les exigences techniques et fonctionnelles définies dans le cahier des charges (les points pas mentionnés n'ont pas été implémentés).
 
 ### Fonctionnalités métiers (FM)
 
@@ -24,8 +22,21 @@ L'objectif est d'implémenter trois fonctionnalités principales :
 
 ### Fonctionnalités métiers optionnelles (FMO)
 
-- FMO01 – La prise en charge de la compression d’une archive tar
-- FMO02 – La prise en charge de la décompression d’une archive tar.gz
+- FMO01 – La prise en charge de la compression d’une archive tar (via la libraire zlib). `ctar --create ./archive.tar.gz --directory ./test-tar --compress`
+- FMO02 – La prise en charge de la décompression d’une archive tar.gz (gzip)
+
+### Contraintes techniques obligatoires (CT)
+- CT01 - Compilation via Makefile (`make` avec `all`, `clean`, `lint`, `doc`, `coverage`)
+- CT02 - Structures constantes définies dans `typedef.h` (`struct header_posix_ustar`, `USTAR_MAGIC`, etc.)
+- CT03 - Séparation des prototypes et implémentations dans des fichiers `.h` (dossier `includes`) et `.c` (dossier `src`)
+- CT04 - Documentation du code avec commentaires explicatifs des fonctions et structures dans les fichiers `.h` (`/** ... */`)
+- CT05 - Parsing des arguments via `getopt_long()` (dans `src/cli_utils.c`)
+- CT06 - Gestion des erreurs via `errno`
+
+### Contraintes techniques optionnelles (CTO)
+- CTO1 - Documentation Doxygen (`make doc` génère la documentation dans `docs/`)
+- CTO2 - Couverture de code avec `gcov` (`make coverage` génère les rapports dans `gcov/`)
+- CTO3 - Page de manuel Linux (`ctar.1` fournie et visible via `man --local-file ./ctar.1`)
 
 ---
 
@@ -55,6 +66,7 @@ L'objectif est d'implémenter trois fonctionnalités principales :
   Un mode `verbose` global permet d’obtenir des messages de debug sans perturber l’exécution normale.
   Le développement a suivi une approche incrémentale recommandée : parsing des arguments, lecture de l’archive, extraction, puis création d’archives.
 
+Nous utilisons `-fsanitize=address -fsanitize=undefined` les flags de compilation gcc pour détecter les fuites mémoires et les erreurs d'accès mémoire.
 Ces choix de conception visent à produire un code clair, structuré et robuste, tout en restant adapté au cadre du projet.
 
 ---
@@ -110,23 +122,7 @@ Le code est organisé de façon claire et modulaire dont voici une explication s
 
 ---
 
-## 5. Respect du cahier des charges
-
-* **FM01 / FM02 / FM03 :** implémentés.
-* **CT01 (Makefile) :** présent.
-* **CT02 (typedef.h) :** respecté.
-* **CT03 (séparation .h/.c) :** respecté.
-* **CT04 (documentation) :** commentaires Doxygen-style présents dans les headers.
-* **CT05 (getopt_long) :** parsing CLI via `cli_utils.h` attendu.
-* **CT06 (errno) :** les fonctions retournent -1 et `errno` est positionné lors d'erreurs.
-
-Fonctionnalités optionnelles "compression" et "décompression" : implémentées.
-
-Fonctionnalité optionnelle "tui" : non implémentée.
-
----
-
-## 6. Répartition du temps
+## 5. Répartition du temps
 
 | Phase         | Djelal (h) | Théo (h) |
 | ------------- | ---------: | -------: |
@@ -137,11 +133,6 @@ Fonctionnalité optionnelle "tui" : non implémentée.
 | **Total**     |      **5** |    **8** |
 
 > Total déclaré par le binôme : **13 h**
----
-
-## 7. Conclusion
-
-Le projet CTAR fournit une implémentation claire et modulaire d'un extracteur/générateur d'archives au format ustar. Les choix de conception favorisent la robustesse et la maintenabilité.
 
 ---
 
