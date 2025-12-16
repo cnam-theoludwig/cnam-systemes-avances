@@ -33,7 +33,6 @@ int ctar_list(const char* archive_path) {
       dprintf(STDOUT_FILENO, "warning: empty name in header, skipping\n");
     }
 
-    // Skip the entire file entry (data + padding) to reach next header
     if (ctar_helper_skip_entry(&archive, parsed.size_bytes) != 0) {
       ctar_helper_close(&archive);
       return -1;

@@ -5,17 +5,19 @@
 
 ## Utilisation du programme
 
-Pour les instructions détaillées de compilation et d'exécution, se référer à la section [Utilisation du fichier README.md](./README.md#utilisation).
+Pour les instructions détaillées de compilation et d'exécution, se référer à la section ["Utilisation" du fichier README.md](./README.md#utilisation).
 
 ## Choix de conception: Architecture du projet
 
-- **`typedef.h`** : Centralise toutes les définitions de structures et constantes liées au format TAR ustar
-- **`ctar.h/ctar.c`** : Implémente uniquement les 4 fonctions principales utilisées par le `main`
-- **`ctar_helper.h/ctar_helper.c`** : Contient toutes les fonctions utilitaires et de bas niveau
-- **`cli_utils.h/cli_utils.c`** : Gère l'interface en ligne de commande et le parsing des arguments
-- **`main.c`** : Point d'entrée simple qui orchestre les appels de fonctions
+- **`typedef.h`** : Centralise toutes les définitions de structures et constantes liées au format TAR ustar.
+- **`ctar.h/ctar.c`** : Implémente uniquement les 3 fonctions (`list`, `extract`, `create`) principales utilisées par le `main`.
+- **`ctar_helper.h/ctar_helper.c`** : Contient toutes les fonctions utilitaires et de bas niveau.
+- **`cli_utils.h/cli_utils.c`** : Gère l'interface en ligne de commande (e.g: parsing des arguments).
+- **`main.c`** : Point d'entrée qui appel les fonctions.
 
 Le dossier `include/` contient les fichiers `.h` et le dossier `src/` contient les fichiers `.c`.
+
+Nous utilisons `-fsanitize=address -fsanitize=undefined` les flags de compilation gcc pour détecter les fuites mémoires et les erreurs d'accès mémoire.
 
 ## Temps passé sur le projet
 
@@ -58,5 +60,5 @@ Nous avons respecté les exigences techniques et fonctionnelles définies dans l
 ### 5.3 Contraintes techniques optionnelles (CTO)
 
 - CTO1 - Documentation Doxygen (`make doc` génère la documentation dans `docs/`)
-- CTO2 - Couverture de code avec `gcov` (`make coverage` génère les rapports dans `coverage/`)
+- CTO2 - Couverture de code avec `gcov` (`make coverage` génère les rapports dans `gcov/`)
 - CTO3 - Page de manuel Linux (`ctar.1` fournie et visible via `man --local-file ./ctar.1`)
