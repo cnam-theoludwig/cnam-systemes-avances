@@ -7,8 +7,6 @@
 
 Pour les instructions détaillées de compilation et d'exécution, se référer à la section [Utilisation du fichier README.md](./README.md#utilisation).
 
----
-
 ## 1. Contexte, objectifs et respect du cahier des charges
 
 Le projet consistait à développer, en C sous Linux, une version simplifiée de la commande `tar` nommée **ctar**.
@@ -24,6 +22,7 @@ Nous avons respecté les exigences techniques et fonctionnelles définies dans l
 
 - FMO01 – La prise en charge de la compression d’une archive tar (via la libraire zlib). `ctar --create ./archive.tar.gz --directory ./test-tar --compress`
 - FMO02 – La prise en charge de la décompression d’une archive tar.gz (gzip)
+- **FMO03 - La réalisation d'une interface en mode console « tui » via la librairie ncurses. N'a pas été implémentée par manque de temps.**
 
 ### Contraintes techniques obligatoires (CT)
 - CT01 - Compilation via Makefile (`make` avec `all`, `clean`, `lint`, `doc`, `coverage`)
@@ -38,7 +37,6 @@ Nous avons respecté les exigences techniques et fonctionnelles définies dans l
 - CTO2 - Couverture de code avec `gcov` (`make coverage` génère les rapports dans `gcov/`)
 - CTO3 - Page de manuel Linux (`ctar.1` fournie et visible via `man --local-file ./ctar.1`)
 
----
 
 ## 2. Choix de conception : Architecture du projet
 
@@ -69,11 +67,10 @@ Nous avons respecté les exigences techniques et fonctionnelles définies dans l
 Nous utilisons `-fsanitize=address -fsanitize=undefined` les flags de compilation gcc pour détecter les fuites mémoires et les erreurs d'accès mémoire.
 Ces choix de conception visent à produire un code clair, structuré et robuste, tout en restant adapté au cadre du projet.
 
----
 
 ## 3. Implémentation
 
-Le code est organisé de façon claire et modulaire dont voici une explication succincte :
+Notre code est organisé de la manière suivante :
 
 * **`main.c`** : point d'entrée. Récupère les paramètres CLI via `cli_main()` et appelle la fonction métier appropriée (`ctar_list`, `ctar_extract` ou `ctar_create`). Gère le mode verbose et les erreurs d'arguments simples.
 
@@ -91,7 +88,6 @@ Le code est organisé de façon claire et modulaire dont voici une explication s
   * pour l'extraction : création des répertoires nécessaires, vérification de sécurité des chemins (anti path-traversal), écriture des fichiers avec `ctar_helper_copy_exact()` et gestion du padding ;
   * pour la création : parcours récursif du répertoire (`ctar_helper_add_directory_recursive`) et écriture d'un marqueur de fin (2 blocs nuls).
 
----
 
 ## 4. Difficultés rencontrées et résolutions
 
@@ -120,7 +116,6 @@ Le code est organisé de façon claire et modulaire dont voici une explication s
    * *Problème :* construire les chemins relatifs corrects dans l'archive et respecter la limite de longueur (name + prefix).
    * *Résolution :* `ctar_helper_add_directory_recursive` calcule `archive_path` relatif au `base_path`, utilise `ctar_helper_join_path` pour scinder prefix/name si nécessaire et écrit un header via `ctar_helper_write_header()` avant d'ajouter les données.
 
----
 
 ## 5. Répartition du temps
 
@@ -133,7 +128,3 @@ Le code est organisé de façon claire et modulaire dont voici une explication s
 | **Total**     |      **5** |    **8** |
 
 > Total déclaré par le binôme : **13 h**
-
----
-
-*Fin du rapport*
