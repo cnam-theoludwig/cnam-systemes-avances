@@ -1,5 +1,11 @@
 # 02-syscalls-process-1-fork
 
+## Utilisation
+
+```sh
+make run
+```
+
 ## Sujet : « Fork yourself »
 
 Écrivez un programme générant un processus fils avec la primitive système fork.

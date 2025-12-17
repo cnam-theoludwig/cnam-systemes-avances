@@ -351,17 +351,17 @@ void ctar_helper_dirname(const char* file_path, char* out, size_t out_length) {
     out[out_length - 1] = '\0';
     return;
   }
-  size_t dir_length = (size_t)(last_slash - file_path);
-  if (dir_length == 0) {
+  size_t directory_length = (size_t)(last_slash - file_path);
+  if (directory_length == 0) {
     strncpy(out, "/", out_length - 1);
     out[out_length - 1] = '\0';
     return;
   }
-  if (dir_length >= out_length) {
-    dir_length = out_length - 1;
+  if (directory_length >= out_length) {
+    directory_length = out_length - 1;
   }
-  strncpy(out, file_path, dir_length);
-  out[dir_length] = '\0';
+  strncpy(out, file_path, directory_length);
+  out[directory_length] = '\0';
 }
 
 int ctar_helper_mkdir_p(const char* path, mode_t mode) {
@@ -392,12 +392,12 @@ int ctar_helper_mkdir_p(const char* path, mode_t mode) {
       *current = '/';
     }
   }
-  struct stat st;
-  if (stat(path_copy, &st) != 0) {
+  struct stat stat_struct;
+  if (stat(path_copy, &stat_struct) != 0) {
     if (mkdir(path_copy, mode) != 0 && errno != EEXIST) {
       return -1;
     }
-  } else if (!S_ISDIR(st.st_mode)) {
+  } else if (!S_ISDIR(stat_struct.st_mode)) {
     errno = ENOTDIR;
     return -1;
   }

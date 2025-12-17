@@ -1,5 +1,13 @@
 # 03-thread-1-sort
 
+## Utilisation
+
+```sh
+make run ARGS="4"
+
+make run ARGS="16"
+```
+
 ## Sujet : Threaded sort
 
 Écrivez un programme qui initialise un grand tableau d'entiers avec des valeurs aléatoires, recherche ensuite le

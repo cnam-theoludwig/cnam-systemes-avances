@@ -1,5 +1,7 @@
 # 02-syscalls-process-2-redirect
 
+## Utilisation
+
 ```sh
 make
 

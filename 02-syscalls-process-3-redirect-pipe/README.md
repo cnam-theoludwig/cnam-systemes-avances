@@ -1,5 +1,11 @@
 # 02-syscalls-process-3-redirect-pipe
 
+## Utilisation
+
+```sh
+make run
+```
+
 ## Sujet : Redirection de flux via « pipe »
 
 Écrivez un programme C équivalent au script shell suivant :

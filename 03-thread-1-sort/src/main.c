@@ -58,7 +58,9 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
   int nthreads = atoi(argv[1]);
-  if (nthreads <= 0) nthreads = 1;
+  if (nthreads <= 0) {
+    nthreads = 1;
+  }
 
   tab = malloc((size_t)SIZE * sizeof(int));
   if (!tab) {

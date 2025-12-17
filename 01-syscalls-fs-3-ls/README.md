@@ -1,5 +1,14 @@
 # 01-syscalls-fs-3-ls
 
+## Utilisation
+
+```sh
+mdkir folder
+echo "File1 content" > folder/File1.txt
+make run ARGS="/root/my_folder"
+```
+
+
 ## Sujet : ls « like »
 
 Implémentez une nouvelle version de la commande « ls » listant les méta-données des fichiers au sein d'une arboressance. A l'aide des primitives système, des structures usuelles et du skeleton (cf archive `01_skeleton.tar.gz`).
@@ -19,12 +28,4 @@ File1 - rwxrwxrw- root : root - 4096 - 010916 @ 16h24
 File2 - rwxrwx--- root : root - 0785 - 020916 @ 10h22
 Myfil3 - rwx------ toto : users - 4096 - 010916 @ 16h24
 [...]
-```
-
-## Utilisation
-
-```sh
-mdkir folder
-echo "File1 content" > folder/File1.txt
-make run ARGS="/root/my_folder"
 ```

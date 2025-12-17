@@ -12,7 +12,7 @@ Code réalisé dans le cadre de la formation [Ingénieur en Informatique et Syst
 - [TP N°2.3 : Appels système & processus : Redirection de flux via « pipe »](./02-syscalls-process-3-redirect-pipe)
 - [TP N°3.1 : Processus & threads : « Threaded sort »](./03-thread-1-sort)
 - [TP N°4 : « Handle » Docker](./04-docker)
-- [Projet `ctar`](./projet-ctar)
+- [Projet `ctar`](./projet-ctar), [Rapport](./projet-ctar/RAPPORT.md)
 
 ### Membres du groupe
 
@@ -29,15 +29,12 @@ Code réalisé dans le cadre de la formation [Ingénieur en Informatique et Syst
 - [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html)
 - [Doxygen](https://www.doxygen.nl/)
 - [LCOV Code Coverage](https://github.com/linux-test-project/lcov)
-- [Docker](https://www.docker.com/) pour le TP n°4
-- [zlib](https://github.com/madler/zlib) pour le projet ctar
+- [Docker](https://www.docker.com/) pour le [TP N°4 : « Handle » Docker](./04-docker)
+- [zlib](https://github.com/madler/zlib) pour le projet [Projet `ctar`](./projet-ctar)
 
 ## Utilisation
 
 ```sh
-# Cloner le dépôt
-git clone git@github.com:cnam-theoludwig/cnam-systemes-avances.git
-
 # Se déplacer dans le répertoire du TP (e.g. 01-syscalls-fs-1-copy)
 cd cnam-systemes-avances/01-syscalls-fs-1-copy
 
